@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Story;
 
+use App\Factory\CarFactory;
+use App\Factory\ReservationFactory;
 use Zenstruck\Foundry\Story;
 
 final class DevStory extends Story
@@ -15,7 +17,7 @@ final class DevStory extends Story
     {
         AuthStory::load();
 
-        // CarFactory::createMany(self::CAR_COUNT);
-        // ReservationFactory::createMany(self::RESERVATION_COUNT);
+        CarFactory::createMany(self::CAR_COUNT);
+        ReservationFactory::createMany(self::RESERVATION_COUNT);
     }
 }
