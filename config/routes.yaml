@@ -1,0 +1,5 @@
+gesdinet_jwt_refresh_token:
+    path: /api/auth/refresh
+
+auth.login:
+    path: /api/auth/login

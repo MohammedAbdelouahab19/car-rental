@@ -1,0 +1,41 @@
+api_platform:
+    title: API documentation
+    description: "Welcome to the API documentation!"
+    version: 1.0.0
+    show_webby: false
+    enable_docs: true
+    path_segment_name_generator: api_platform.path_segment_name_generator.dash
+    collection:
+        order_parameter_name: 'sort'
+    mapping:
+        paths: [ '%kernel.project_dir%/src/Entity' ]
+    patch_formats:
+        json: [ 'application/merge-patch+json' ]
+        multipart: [ 'multipart/form-data' ]
+    swagger:
+        versions: [ 3 ]
+    formats:
+        #        multipart: [ 'multipart/form-data' ]
+        jsonld: [ 'application/ld+json' ]
+        json: [ 'application/json' ]
+        html: [ 'text/html' ]
+    docs_formats:
+        jsonld: [ 'application/ld+json' ]
+        jsonopenapi: [ 'application/vnd.openapi+json' ]
+        html: [ 'text/html' ]
+    defaults:
+        normalizationContext:
+            skip_null_values: false
+            groups: [ ]
+        stateless: true
+        cache_headers:
+            vary: [ 'Content-Type', 'Authorization', 'Origin' ]
+        extra_properties:
+            standard_put: true
+            rfc_7807_compliant_errors: true
+        pagination_items_per_page: 10000
+        pagination_client_items_per_page: true
+        openapi_context:
+            servers:
+                -   url: http://localhost
+    use_symfony_listeners: true
