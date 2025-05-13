@@ -23,11 +23,6 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, event: prePersist, entity: App\Entity\User }
     
-    App\Doctrine\CurrentUserExtension:
-        tags:
-            - { name: api_platform.doctrine.orm.query_extension.collection }
-            - { name: api_platform.doctrine.orm.query_extension.item }
-    
     App\State\UserPasswordHasher:
         bind:
             $processor: '@api_platform.doctrine.orm.state.persist_processor'

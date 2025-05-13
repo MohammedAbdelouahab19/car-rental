@@ -14,6 +14,8 @@ use App\Entity\Trait\Timestamp\HasTimestamps;
 use App\Service\Validator;
 use App\State\AuthenticatedUserProvider;
 use App\State\UserPasswordHasher;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -44,6 +46,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups([
         OperationEnum::USER_AUTH,
         OperationEnum::UserListing->name,
+        OperationEnum::ReservationListing->name,
+        OperationEnum::ReservationDetail->name,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -75,6 +79,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         OperationEnum::UserCreate->name,
         OperationEnum::UserDetail->name,
         OperationEnum::UserListing->name,
+        OperationEnum::ReservationListing->name,
+        OperationEnum::ReservationDetail->name,
     ])]
     #[Assert\NotBlank(message: Validator::NOT_BLANK)]
     #[ORM\Column]
@@ -124,6 +130,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Gedmo\Timestampable]
     private ?\DateTime $updatedAt;
 
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'tenant')]
+    private Collection $reservations;
+
+    public function __construct()
+    {
+        $this->reservations = new ArrayCollection();
+    }
+
     #[Groups([
         OperationEnum::USER_AUTH,
         OperationEnum::UserListing->name,
@@ -134,6 +151,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
+    #[Groups([
+        OperationEnum::ReservationListing->name,
+        OperationEnum::ReservationDetail->name,
+    ])]
     public function getName(): string
     {
         return strtoupper($this->getLastName()) . ' ' . lcfirst($this->getFirstName());
@@ -243,5 +264,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->getUsername();
+    }
+
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setTenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): static
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            // set the owning side to null (unless already changed)
+            if ($reservation->getTenant() === $this) {
+                $reservation->setTenant(null);
+            }
+        }
+
+        return $this;
     }
 }
