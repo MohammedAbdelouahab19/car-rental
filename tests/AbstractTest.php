@@ -68,4 +68,22 @@ abstract class AbstractTest extends ApiTestCase
 
         return $data['token'];
     }
+
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    protected function getTokenForUser($user): string
+    {
+        $credentials = ['username' => $user->getUsername(), 'password' => 'azerty'];
+
+        $response = static::createClient()->request('POST', '/api/auth/login', ['json' => $credentials]);
+        $this->assertResponseIsSuccessful();
+
+        $data = $response->toArray();
+        return $data['token'];
+    }
 }

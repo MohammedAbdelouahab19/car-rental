@@ -202,4 +202,70 @@ class ReservationTest extends AbstractTest
 
         $this->assertResponseStatusCodeSame(204);
     }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public function testGetReservationItem(): void
+    {
+        $reservation = ReservationFactory::createOne();
+
+        $response = $this->createClientWithCredentials()->request('GET', '/api/reservations/' . $reservation->getId());
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains([
+            '@id' => '/api/reservations/' . $reservation->getId(),
+            '@type' => 'Reservation',
+        ]);
+    }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public function testGetReservationCollectionOfUser(): void
+    {
+        $tenant = UserFactory::createOne();
+        $reservation = ReservationFactory::createOne(['tenant' => $tenant]);
+
+        $client = $this->createClientWithCredentials();
+
+        $response = $client->request('GET', `/api/users/{$tenant->getId()}/reservations`);
+
+        $this->assertResponseIsSuccessful();
+        $this->assertJsonContains([
+            '@context' => '/api/contexts/Reservation',
+            '@type' => 'Collection',
+            'hydra:member' => [
+                [
+                    '@id' => '/api/reservations/' . $reservation->getId(),
+                ]
+            ]
+        ]);
+    }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public function testGetReservationCollectionOfOtherUserNotFound(): void
+    {
+        $currentUser = UserFactory::createOne();
+dd($currentUser);
+        $client = $this->createClientWithCredentials();
+
+        $client->request('GET', `/api/users/{$currentUser->getId()}/reservations`);
+
+        $this->assertResponseStatusCodeSame(404);
+    }
 }
