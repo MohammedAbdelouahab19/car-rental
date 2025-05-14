@@ -19,6 +19,7 @@ enum OperationEnum
     case CarDelete;
 
     case ReservationListing;
+    case UserReservationListing;
     case ReservationCreate;
     case ReservationDetail;
     case ReservationUpdate;

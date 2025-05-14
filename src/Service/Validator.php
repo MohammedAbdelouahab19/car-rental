@@ -8,6 +8,9 @@ final class Validator
 {
     public const string UNIQUE_ENTITY = 'VALIDATION.MIXED.UNIQUE';
     public const string NOT_BLANK = 'VALIDATION.MIXED.REQUIRED';
+    public const string STARTING_DATE_GREATER_OR_EQ_THAN_TODAY = 'STARTING_DATE_GREATER_OR_EQ_THAN_TODAY';
+    public const string END_DATE_GREATER_OR_EQ_THAN_START_DATE = 'END_DATE_GREATER_OR_EQ_THAN_START_DATE';
+    public const string CAR_NOT_AVAILABLE_IN_THIS_PERIOD = 'CAR_NOT_AVAILABLE_IN_THIS_PERIOD';
 
     public function __construct(
         protected ValidatorInterface $validator

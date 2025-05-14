@@ -1,24 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\EventListener;
 
 use App\Entity\Reservation;
+use App\Service\ReservationHandlerInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
-use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Events;
+use Symfony\Bundle\SecurityBundle\Security;
 
 #[AsEntityListener(event: Events::prePersist, method: 'prePersist', entity: Reservation::class)]
-class ReservationListener
+#[AsEntityListener(event: Events::preUpdate, method: 'preUpdate', entity: Reservation::class)]
+readonly class ReservationListener
 {
+    public function __construct(
+        private ReservationHandlerInterface $reservationHandler,
+        private Security $security,
+    ) {
+    }
+
     public function prePersist(Reservation $reservation): void
     {
-        $reservation->setReference(
-            sprintf('%s-%s-%s-%s',
-                $reservation->getCar()->getBrand() ,
-                $reservation->getStartDate()->format('Ymd'),
-                $reservation->getEndDate()->format('Ymd'),
-                $reservation->getDuration(),
-            )
-        );
+        $reservation->setReference($this->reservationHandler->generateReferenceFromReservation($reservation));
+        $reservation->setTenant($this->security->getUser());
+        $reservation->setTotalPrice($this->reservationHandler->calculateTotalPrice($reservation));
+    }
+
+    public function preUpdate(Reservation $reservation): void
+    {
+        $reservation->setReference($this->reservationHandler->generateReferenceFromReservation($reservation));
+        $reservation->setTenant($this->security->getUser());
+        $reservation->setTotalPrice($this->reservationHandler->calculateTotalPrice($reservation));
     }
 }

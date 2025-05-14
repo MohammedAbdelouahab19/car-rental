@@ -30,6 +30,8 @@ class Car
         OperationEnum::ReservationDetail->name,
         OperationEnum::CarListing->name,
         OperationEnum::CarDetail->name,
+        OperationEnum::UserReservationListing->name,
+        OperationEnum::ReservationCreate->name,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -41,6 +43,7 @@ class Car
         OperationEnum::ReservationDetail->name,
         OperationEnum::CarListing->name,
         OperationEnum::CarDetail->name,
+        OperationEnum::UserReservationListing->name,
     ])]
     #[ORM\Column]
     private ?string $title = null;
@@ -50,6 +53,7 @@ class Car
         OperationEnum::ReservationDetail->name,
         OperationEnum::CarListing->name,
         OperationEnum::CarDetail->name,
+        OperationEnum::UserReservationListing->name,
     ])]
     #[ORM\Column(length: 50)]
     private ?string $brand = null;
@@ -59,6 +63,7 @@ class Car
         OperationEnum::ReservationDetail->name,
         OperationEnum::CarListing->name,
         OperationEnum::CarDetail->name,
+        OperationEnum::UserReservationListing->name,
     ])]
     #[ORM\Column]
     private ?float $price = null;
