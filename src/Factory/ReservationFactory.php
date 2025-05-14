@@ -22,8 +22,8 @@ final class ReservationFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         $f = self::faker();
-        $startDate = $f->dateTimeInInterval($f->dateTime());
-        $endDate = $f->dateTimeInInterval($startDate);
+        $startDate = $f->dateTimeBetween('-1 month');
+        $endDate = $f->dateTimeBetween($startDate->format('Y-m-d H:i:s'), '+1 week');
 
         return [
             'tenant' => lazy(fn() => UserFactory::randomOrCreate()),
@@ -31,6 +31,7 @@ final class ReservationFactory extends PersistentProxyObjectFactory
             'startDate' => $startDate,
             'endDate' =>  $endDate,
             'totalPrice' => $f->numberBetween(100, 1000),
+            'reference' => $f->title(),
         ];
     }
 }
