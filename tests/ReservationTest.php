@@ -4,15 +4,25 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
-use App\Entity\Reservation;
 use App\Factory\CarFactory;
 use App\Factory\ReservationFactory;
 use App\Factory\UserFactory;
-use Zenstruck\Foundry\Test\Factories;
-use Zenstruck\Foundry\Test\ResetDatabase;
+use App\Service\Validator;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class ReservationTest extends AbstractTest
 {
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
     public function testGetReservationCollection(): void
     {
         ReservationFactory::createMany(10);
@@ -27,6 +37,13 @@ class ReservationTest extends AbstractTest
         ]);
     }
 
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
     public function testCreateReservation(): void
     {
         $car = CarFactory::createOne();
@@ -52,6 +69,13 @@ class ReservationTest extends AbstractTest
         ]);
     }
 
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
     public function testStartDateGreaterThanToday(): void
     {
         $car = CarFactory::createOne();
@@ -68,11 +92,18 @@ class ReservationTest extends AbstractTest
         $this->assertJsonContains([
             '@context' => '/api/contexts/ConstraintViolation',
             'violations' => [
-                ['propertyPath' => 'startDate', 'message' => 'STARTING_DATE_GREATER_OR_EQ_THAN_TODAY'],
+                ['propertyPath' => 'startDate', 'message' => Validator::STARTING_DATE_GREATER_OR_EQ_THAN_TODAY],
             ],
         ]);
     }
 
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
     public function testEndDateBeforeStartDate(): void
     {
         $car = CarFactory::createOne();
@@ -89,11 +120,18 @@ class ReservationTest extends AbstractTest
         $this->assertJsonContains([
             '@context' => '/api/contexts/ConstraintViolation',
             'violations' => [
-                ['propertyPath' => 'endDate', 'message' => 'END_DATE_GREATER_OR_EQ_THAN_START_DATE'],
+                ['propertyPath' => 'endDate', 'message' => Validator::END_DATE_GREATER_OR_EQ_THAN_START_DATE],
             ],
         ]);
     }
 
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
     public function testCarNotAvailableInPeriod(): void
     {
         $car = CarFactory::createOne();
@@ -107,22 +145,39 @@ class ReservationTest extends AbstractTest
             'reference' => 'ref',
         ]]);
 
+        $response = $this->createClientWithCredentials()->request('POST', '/api/reservations', ['json' => [
+            'startDate' => (new \DateTime('+1 day'))->format('Y-m-d'),
+            'endDate' => (new \DateTime('+3 days'))->format('Y-m-d'),
+            'car' => '/api/cars/' . $car->getId(),
+            'tenant' => '/api/users/' . $tenant->getId(),
+            'reference' => 'ref',
+        ]]);
+
         $this->assertResponseStatusCodeSame(422);
         $this->assertJsonContains([
             '@context' => '/api/contexts/ConstraintViolation',
             'violations' => [
-                ['propertyPath' => 'car', 'message' => 'CAR_NOT_AVAILABLE_IN_THIS_PERIOD'],
+                ['propertyPath' => 'car', 'message' => Validator::CAR_NOT_AVAILABLE_IN_THIS_PERIOD],
             ],
         ]);
     }
 
-
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
     public function testUpdateReservation(): void
     {
         $reservation = ReservationFactory::createOne();
+        $car = CarFactory::createOne();
 
         $response = $this->createClientWithCredentials()->request('PUT', '/api/reservations/' . $reservation->getId(), ['json' => [
+            'startDate' => (new \DateTime('+1 days'))->format('Y-m-d'),
             'endDate' => (new \DateTime('+5 days'))->format('Y-m-d'),
+            'car' => '/api/cars/' . $car->getId(),
         ]]);
 
         $this->assertResponseIsSuccessful();
@@ -131,6 +186,13 @@ class ReservationTest extends AbstractTest
         ]);
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
     public function testDeleteReservation(): void
     {
         $reservation = ReservationFactory::createOne();

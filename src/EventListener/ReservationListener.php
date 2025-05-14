@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\EventListener;
 
+use App\Entity\Car;
 use App\Entity\Reservation;
 use App\Service\ReservationHandlerInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
@@ -33,7 +34,7 @@ readonly class ReservationListener
             return;
         }
 
-        $reservation->setReference($this->reservationHandler->generateReferenceFromReservation($reservation));
+        $reservation->setReference($this->reservationHandler->generateReferenceFromReservation($reservation, new Car()));
         $reservation->setTenant($this->security->getUser());
         $reservation->setTotalPrice($this->reservationHandler->calculateTotalPrice($reservation));
     }
@@ -44,7 +45,7 @@ readonly class ReservationListener
             return;
         }
 
-        $reservation->setReference($this->reservationHandler->generateReferenceFromReservation($reservation));
+        $reservation->setReference($this->reservationHandler->generateReferenceFromReservation($reservation, new Car()));
         $reservation->setTenant($this->security->getUser());
         $reservation->setTotalPrice($this->reservationHandler->calculateTotalPrice($reservation));
     }

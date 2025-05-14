@@ -22,7 +22,7 @@ final class ReservationFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         $f = self::faker();
-        $startDate = $f->dateTimeBetween('-1 month', 'now');
+        $startDate = $f->dateTimeBetween('-1 month');
         $endDate = $f->dateTimeBetween($startDate->format('Y-m-d H:i:s'), '+1 week');
 
         return [
