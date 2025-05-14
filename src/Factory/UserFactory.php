@@ -28,6 +28,11 @@ final class UserFactory extends PersistentProxyObjectFactory
             'password' => $f->password(),
             'roles' => [ RoleEnum::User->name ],
             'username' => $f->userName(),
+
+            'passwordUpdatedAt' => new \DateTime(), // Set this to a valid datetime
+            'phoneNumber' => null, // Or set a value here if needed
+            'createdAt' => new \DateTime(), // Set this to the current time or a valid datetime
+            'updatedAt' => new \DateTime(), // Set this to the current time or a valid datetime
         ];
     }
 }

@@ -49,6 +49,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         OperationEnum::UserListing->name,
         OperationEnum::ReservationListing->name,
         OperationEnum::ReservationDetail->name,
+        OperationEnum::ReservationCreate->name,
+        OperationEnum::ReservationUpdate->name,
     ])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
