@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
 use App\Entity\Enum\OperationEnum;
 use App\Entity\Trait\Timestamp\HasTimestamps;
 use App\Service\Validator;
