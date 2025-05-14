@@ -23,7 +23,11 @@ final class AuthStory extends Story
                         'lastName' => $enum->lastName(),
                         'username' => $enum->username(),
                         'plainPassword' => 'azerty',
-                        'roles' => [ $enum->role()->value ],
+                        'roles' => [$enum->role()->value],
+                        'passwordUpdatedAt' => new \DateTime(), // Set this to a valid datetime
+                        'phoneNumber' => null, // Or set a value here if needed
+                        'createdAt' => new \DateTime(), // Set this to the current time or a valid datetime
+                        'updatedAt' => new \DateTime(), // Set this to the current time or a valid datetime
                     ];
                 });
         }catch (\Exception $exception) {

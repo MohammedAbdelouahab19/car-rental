@@ -117,8 +117,10 @@ class Reservation
     #[Groups([
         OperationEnum::ReservationListing->name,
         OperationEnum::ReservationDetail->name,
+        OperationEnum::ReservationCreate->name,
+        OperationEnum::ReservationUpdate->name,
     ])]
-    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'reservations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $tenant = null;
 
