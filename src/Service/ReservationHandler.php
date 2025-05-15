@@ -25,7 +25,6 @@ readonly class ReservationHandler implements ReservationHandlerInterface
     {
         $car = $reservation->getCar();
         if ($reservation->getCar() == null) {
-            dd($reservation->getId());
             $car = $this->reservationRepository->findOneBy(['id' => $reservation->getId()])->getCar();
         }
 
