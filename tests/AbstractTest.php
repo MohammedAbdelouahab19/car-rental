@@ -84,6 +84,19 @@ abstract class AbstractTest extends ApiTestCase
         $this->assertResponseIsSuccessful();
 
         $data = $response->toArray();
+        $this->setUserId($data['user']['id']);
         return $data['token'];
+    }
+
+    protected int $userId;
+
+    public function setUserId(int $userId): void
+    {
+        $this->userId = $userId;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->userId;
     }
 }

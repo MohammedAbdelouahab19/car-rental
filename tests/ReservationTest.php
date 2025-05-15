@@ -174,7 +174,7 @@ class ReservationTest extends AbstractTest
         $reservation = ReservationFactory::createOne();
         $car = CarFactory::createOne();
 
-        $response = $this->createClientWithCredentials()->request('PUT', '/api/reservations/' . $reservation->getId(), ['json' => [
+        $response = $this->createClientWithCredentials()->request('PUT', sprintf('/api/reservations/%d', $reservation->getId()), ['json' => [
             'startDate' => (new \DateTime('+1 days'))->format('Y-m-d'),
             'endDate' => (new \DateTime('+5 days'))->format('Y-m-d'),
             'car' => '/api/cars/' . $car->getId(),
@@ -182,7 +182,7 @@ class ReservationTest extends AbstractTest
 
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
-            '@id' => '/api/reservations/' . $reservation->getId(),
+            '@id' => sprintf('/api/reservations/%d', $reservation->getId()),
         ]);
     }
 
@@ -198,7 +198,7 @@ class ReservationTest extends AbstractTest
         $reservation = ReservationFactory::createOne();
 
         $client = $this->createClientWithCredentials();
-        $client->request('DELETE', '/api/reservations/' . $reservation->getId());
+        $client->request('DELETE', sprintf('/api/reservations/%s', $reservation->getId()));
 
         $this->assertResponseStatusCodeSame(204);
     }
@@ -214,12 +214,30 @@ class ReservationTest extends AbstractTest
     {
         $reservation = ReservationFactory::createOne();
 
-        $response = $this->createClientWithCredentials()->request('GET', '/api/reservations/' . $reservation->getId());
+        $response = $this->createClientWithCredentials()->request('GET', sprintf('/api/reservations/%s', $reservation->getId()));
 
         $this->assertResponseIsSuccessful();
         $this->assertJsonContains([
             '@id' => '/api/reservations/' . $reservation->getId(),
             '@type' => 'Reservation',
         ]);
+    }
+
+    /**
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    public function testGetReservationCollectionOfOtherUserNotFound(): void
+    {
+        $currentUser = UserFactory::createOne();
+
+        $client = $this->createClientWithCredentials();
+
+        $client->request('GET', sprintf('/api/users/%d/reservations', $currentUser->getId()));
+
+        $this->assertResponseStatusCodeSame(404);
     }
 }
