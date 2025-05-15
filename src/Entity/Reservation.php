@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -18,12 +17,11 @@ use App\Validator\AvailableCar;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[GetCollection(
     order: ['startDate' => 'DESC', 'endDate' => 'ASC', 'id' => 'DESC'],
-    normalizationContext: ['groups' => [OperationEnum::UserReservationListing->name]],
+    normalizationContext: ['groups' => [OperationEnum::ReservationListing->name]],
 )]
 #[Get(
     normalizationContext: ['groups' => [OperationEnum::ReservationDetail->name]],
